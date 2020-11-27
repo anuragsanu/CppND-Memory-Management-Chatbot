@@ -4,9 +4,9 @@
 #include <vector>
 #include <string>
 #include "chatgui.h"
+#include "chatbot.h"
 
 // forward declarations
-class ChatBot;
 class GraphEdge;
 class GraphNode;
 
@@ -17,16 +17,14 @@ private:
     ////
 
     // data handles (owned)
-    std::vector<GraphNode *> _nodes;
-    std::vector<GraphEdge *> _edges;
+    std::vector<std::unique_ptr<GraphNode>> _nodes;
 
     ////
     //// EOF STUDENT CODE
 
     // data handles (not owned)
-    GraphNode *_currentNode;
-    ChatBot *_chatBot;
     ChatBotPanelDialog *_panelDialog;
+    ChatBot* _chatBot;
 
     // proprietary type definitions
     typedef std::vector<std::pair<std::string, std::string>> tokenlist;
@@ -40,6 +38,13 @@ public:
     ChatLogic();
     ~ChatLogic();
 
+    void setChatBot(ChatBot* bot)
+    {
+        _chatBot = bot;
+    }
+
+   // ChatLogic(const ChatLogic&& chatlogic);
+    ChatLogic(const ChatLogic& chatlogic);
     // getter / setter
     void SetPanelDialogHandle(ChatBotPanelDialog *panelDialog);
     void SetChatbotHandle(ChatBot *chatbot);

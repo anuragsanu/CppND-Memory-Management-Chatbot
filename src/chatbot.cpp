@@ -17,15 +17,80 @@ ChatBot::ChatBot()
     _rootNode = nullptr;
 }
 
+ChatBot::ChatBot(const ChatBot& copychatbot)
+{
+    std::cout << "copy constructor of ChatBot is called " << std::endl;
+    this->_image = new wxBitmap(copychatbot.filename_, wxBITMAP_TYPE_PNG);
+    this->_chatLogic = copychatbot._chatLogic;
+    this->_rootNode = copychatbot._rootNode;
+    this->_currentNode = copychatbot._currentNode;
+}
+
+ChatBot& ChatBot::operator=(const ChatBot& copychatbot)
+{
+     std::cout << "copy assignment constructor of ChatBot is called " << std::endl;
+    if(this == &copychatbot)
+    {
+        return *this;
+    }
+
+    this->_image = new wxBitmap(copychatbot.filename_, wxBITMAP_TYPE_PNG);
+    this->_chatLogic = copychatbot._chatLogic;
+    this->_rootNode = copychatbot._rootNode;
+    this->_currentNode = copychatbot._currentNode;
+
+    return *this;
+}
+
+ChatBot& ChatBot::operator=(ChatBot &&copychatbot)
+{
+   std::cout << " move assignment constructor of ChatBot is called " << std::endl;
+   if(this == &copychatbot)
+   {
+       return *this;
+   }
+
+
+     this->_image = copychatbot._image;
+     this->_chatLogic = copychatbot._chatLogic;
+     this->_rootNode = copychatbot._rootNode;
+     this->_currentNode = copychatbot._currentNode;
+
+     copychatbot._image = nullptr;
+     copychatbot._chatLogic = nullptr;
+     copychatbot._rootNode = nullptr;
+     copychatbot._currentNode = nullptr;
+
+     return *this;
+}
+
+
+ChatBot::ChatBot(ChatBot &&copychatbot)
+{
+   std::cout << " move constructor of ChatBot is called " << std::endl;
+
+   this->_image = copychatbot._image;
+   this->_chatLogic = copychatbot._chatLogic;
+   this->_rootNode = copychatbot._rootNode;
+   this->_currentNode = copychatbot._currentNode;
+
+   copychatbot._image = nullptr;
+   copychatbot._chatLogic = nullptr;
+   copychatbot._rootNode = nullptr;
+   copychatbot._currentNode = nullptr;
+
+
+
+}
+
 // constructor WITH memory allocation
 ChatBot::ChatBot(std::string filename)
 {
     std::cout << "ChatBot Constructor" << std::endl;
-    
     // invalidate data handles
     _chatLogic = nullptr;
     _rootNode = nullptr;
-
+    filename_ = filename;
     // load image into heap memory
     _image = new wxBitmap(filename, wxBITMAP_TYPE_PNG);
 }
@@ -93,7 +158,6 @@ void ChatBot::SetCurrentNode(GraphNode *node)
     std::uniform_int_distribution<int> dis(0, answers.size() - 1);
     std::string answer = answers.at(dis(generator));
 
-    // send selected node answer to user
     _chatLogic->SendMessageToUser(answer);
 }
 
